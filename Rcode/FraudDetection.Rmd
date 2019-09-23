@@ -2,11 +2,123 @@
 title: "Fraud Detection"
 author: "Manu Mathew"
 date: "23 September 2019"
-output: html_document
+output:
+  html_document:
+    toc: true
+    number_sections: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    code_folding: hide
 ---
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Load packages
+# Loading packages and setting the path
+
+```{r}
+Install_And_Load <- function(packages) {
+    k <- packages[!(packages %in% installed.packages()[,"Package"])];
+    if(length(k))
+    {install.packages(k, repos='https://cran.rstudio.com/');}
+    
+    for(package_name in packages)
+    {suppressMessages(library(package_name,character.only=TRUE, quietly = TRUE));}
+}
+
+Install_And_Load(c("rapportools", 
+                   "plyr" , "dplyr", "tidyr",
+                   "plotly", "tictoc", 
+                   "pracma", "tis",
+                   "purrr", "purrrlyr",
+                   "cluster", "Rtsne", "mlr",
+                   "kknn", "glmnet", "h2o", "caret",
+                   "irace"
+                   ))
+
+wd <- "E:/Documents/PersonalProjects/IEEE-CIS-Fraud_Detection/"
+
+loadAndPlot <- function(variable, prefix, suffix = "_Plotly.rda") {
+    ext <- paste0(variable, suffix)
+    load(paste0(wd, "Data/Processed/Rdata/Plotly/", ext))
+    p
+}
+
+```
+# About Data
+
+We have the following information from the official site and discussions on Kaggle competition page.
+
+
+__Transaction Table__ 
+
+* TransactionDT: timedelta from a given reference datetime (not an actual timestamp)
+* TransactionAMT: transaction payment amount in USD
+* ProductCD: product code, the product for each transaction
+* card1 - card6: payment card information, such as card type, card category, issue bank, country, etc.
+* addr: address
+* dist: distance
+* P_ and (R__) emaildomain: purchaser and recipient email domain
+* C1-C14: counting, such as how many addresses are found to be associated with the payment card, etc. The actual meaning is masked.
+* D1-D15: timedelta, such as days between previous transaction, etc.
+* M1-M9: match, such as names on card and address, etc.
+* Vxxx: Vesta engineered rich features, including ranking, counting, and other entity relations.
+
+_Categorical Features:_
+
+* ProductCD
+* card1 - card6
+* addr1, addr2
+* Pemaildomain Remaildomain
+* M1 - M9
+
+__Identity Table__
+
+Variables in this table are identity information – network connection information (IP, ISP, Proxy, etc) and digital signature (UA/browser/os/version, etc) associated with transactions.
+They're collected by Vesta’s fraud protection system and digital security partners.
+(The field names are masked and pairwise dictionary will not be provided for privacy protection and contract agreement)
+
+_Categorical Features:_
+
+* DeviceType
+* DeviceInfo
+* id12 - id38
+
+# Data Ingestion
+
+The train data is split into train_transaction (650 MB) and train_identity (25 MB) datasets. So lets have a look at the first few rows and after deciding on the data types, we shall read in the whole data. 
+
+
+```{r eval=FALSE, include=FALSE}
+sample_trainTransaction <- read.csv(file = paste0(wd, "Data/Processed/train_transaction.csv"),
+                                    nrows = 10, 
+                                    header = TRUE, 
+                                    stringsAsFactors = TRUE)
+
+trainTransaction <- read.csv(file = paste0(wd, "Data/Processed/train_transaction.csv"),
+                                    # nrows = 10, 
+                                    header = TRUE, 
+                                    stringsAsFactors = TRUE)
+
+save(trainTransaction,
+     file = paste0(wd, "Data/Processed/Rdata/trainTransaction.rda"))
+
+# str(sample_trainTransaction)
+```
+
+# Data manipulation
+
+## trainTransaction
+Convert these variables to factor-
+* DeviceType
+* DeviceInfo
+* id12 - id38
+
+```{r}
+
+```
+
