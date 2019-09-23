@@ -1,0 +1,12 @@
+---
+title: "Fraud Detection"
+author: "Manu Mathew"
+date: "23 September 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load packages
