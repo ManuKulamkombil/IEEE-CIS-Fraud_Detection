@@ -112,13 +112,31 @@ save(trainTransaction,
 
 # Data manipulation
 
-## trainTransaction
-Convert these variables to factor-
-* DeviceType
-* DeviceInfo
-* id12 - id38
+## train_transaction.csv - trainTransaction data
+
+Replace multiple mutations of empty, like "" or a space with NA.
 
 ```{r}
-
+trainTransaction <- apply(trainTransaction, 2, function(x) gsub("^$", NA, trimws(x)))
 ```
+
+
+Convert these variables to factor-
+* ProductCD
+* card1 - card6
+* addr1, addr2
+* Pemaildomain Remaildomain
+* M1 - M9
+
+```{r}
+factCols <- c('ProductCD', 
+              paste0('card', c(1:6)),
+              paste0('addr', c(1:2)),
+              'P_emaildomain', 'R_emaildomain',
+              paste0('M', c(1:9)))
+
+trainTransaction[factCols] <- lapply(trainTransaction[factCols], factor) 
+
+str(trainTransaction)
+    ```
 
