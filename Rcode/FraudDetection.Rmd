@@ -110,16 +110,19 @@ save(trainTransaction,
 # str(sample_trainTransaction)
 ```
 
+
+LOAD DATA ######
+
+```{r}
+load(file = paste0(wd, "Data/Processed/Rdata/trainTransaction.rda"))
+```
+
+
 # Data manipulation
 
 ## train_transaction.csv - trainTransaction data
 
 Replace multiple mutations of empty, like "" or a space with NA.
-
-```{r}
-trainTransaction <- apply(trainTransaction, 2, function(x) gsub("^$", NA, trimws(x)))
-```
-
 
 Convert these variables to factor-
 * ProductCD
@@ -135,8 +138,13 @@ factCols <- c('ProductCD',
               'P_emaildomain', 'R_emaildomain',
               paste0('M', c(1:9)))
 
-trainTransaction[factCols] <- lapply(trainTransaction[factCols], factor) 
+
+trainTransaction <- trainTransaction %>%
+    # Replace multiple mutations of empty, like "" or a space with NA.
+    mutate_at(.vars = factCols, function(x) gsub("^$", NA, trimws(x))) %>%
+    mutate_at(.vars = factCols, .funs = factor)
 
 str(trainTransaction)
-    ```
+
+```
 
